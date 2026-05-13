@@ -1,0 +1,522 @@
+/* ============================================================
+   JodLxVerse — global.css
+   Source of truth: BLUEPRINT.md §3–§10
+   Path A fonts: Inter Variable / IBM Plex Mono / Big Shoulders Display Bold / Space Grotesk
+   Font-family names preserved verbatim so component CSS never changes.
+   ============================================================ */
+
+/* @import must precede all other rules (CSS spec) */
+/* CJK i18n (§7 [REAL_CODE] — required before @font-face) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Sans+SC:wght@400;700;900&family=Noto+Sans+TC:wght@400;700;900&display=swap');
+
+
+/* ─── §7: FONT LOADING — Path A substitutes ──────────────────
+   Console warnings for Path A usage fired in plugins/fonts.client.js
+   ──────────────────────────────────────────────────────────── */
+
+/* ABCWhyteInktrap → Inter Variable (same file, alias) */
+@font-face {
+  font-family: ABCWhyteInktrap;
+  font-stretch: 75% 125%;
+  font-weight: 125 950;
+  font-display: swap;
+  src: url('/fonts/InterVariable.woff2') format('woff2-variations');
+}
+
+/* ABCWhytePlus → Inter Variable */
+@font-face {
+  font-family: ABCWhytePlus;
+  font-stretch: 75% 125%;
+  font-weight: 125 950;
+  font-display: swap;
+  src: url('/fonts/InterVariable.woff2') format('woff2-variations');
+}
+
+/* ABCWhyte → Inter Variable */
+@font-face {
+  font-family: ABCWhyte;
+  font-stretch: 75% 125%;
+  font-weight: 125 950;
+  font-display: swap;
+  src: url('/fonts/InterVariable.woff2') format('woff2-variations');
+}
+
+/* Hexaframe → Big Shoulders Display Bold */
+@font-face {
+  font-family: Hexaframe;
+  font-stretch: normal;
+  font-display: swap;
+  src: url('/fonts/BigShouldersDisplay-Bold.woff2') format('woff2');
+}
+
+/* IBMPlexMono — static 400-weight WOFF2; declared as range so weight
+   requests 400–700 resolve to this file (no variable interpolation). */
+@font-face {
+  font-family: IBMPlexMono;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/IBMPlexMono-VariableFont.woff2') format('woff2');
+}
+
+/* Fraktion → Space Grotesk Variable */
+@font-face {
+  font-family: Fraktion;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/SpaceGrotesk-Variable.woff2') format('woff2-variations');
+}
+
+/* (moved to top of file — @import must precede all other rules) */
+
+
+/* ─── §4: CSS DESIGN TOKENS — :root [REAL_CODE] ────────────── */
+
+:root {
+  /* ─── Z-INDEX LAYERS ────────────────────────────────────── */
+  --z-frame:           100;
+  --z-footer:          200;
+  --z-overlays:        300;
+  --z-resize-overlays: 350;
+  --z-loader:          400;
+  --z-menu:            500;
+  --z-console:         600;
+  --z-debug:          1000;
+
+  /* ─── VIEWPORT HEIGHT (JS-updated for mobile browser chrome) */
+  --vh100max:   100vh;
+  --vh100:      100vh;
+  --vh100min:   100vh;
+  --jsvh100min: 100vh;
+  --roughMin:   calc(100vh - 30vw);
+  --safe100min: max(var(--roughMin), var(--jsvh100min));
+
+  /* ─── SPACING / RADIUS ──────────────────────────────────── */
+  --radius:   1rem;   /* 10px */
+  --overlap:  2rem;   /* 20px */
+  --parallax: 4rem;   /* 40px */
+
+  /* ─── LINES / DIVIDERS ──────────────────────────────────── */
+  --line-light:     hsla(0, 0%, 100%, 0.2);
+  --line-dark:      rgba(0, 0, 0, 0.1);
+  --line-thickness: 1px;
+
+  /* ─── FRAME / CHROME DIMENSIONS ────────────────────────── */
+  --menu-width:   67px;
+  --menu-height:  51px;
+  --menu-pad:     20px;
+  --menu-radius:  10px;
+  --menu-submenu: 0px;
+
+  /* ─── DERIVED FRAME POSITIONS ───────────────────────────── */
+  --menu-top:    calc(var(--menu-pad) + var(--menu-height));  /* = 71px */
+  --menu-bottom: calc(var(--menu-pad));                        /* = 20px */
+  --menu-left:   calc(var(--menu-pad) + var(--menu-width));   /* = 87px */
+  --menu-right:  calc(var(--menu-pad));                        /* = 20px */
+
+  /* ─── COLORS ────────────────────────────────────────────── */
+  --cl-black:    #000000;
+  --cl-white:    #ffffff;
+  --cl-green:    #c0fb50;   /* neon lime accent */
+  --cl-lavender: #968adf;   /* soft purple */
+  --cl-error:    #b83e35;
+  --cl-debug:    hsla(0, 0%, 100%, 0.3);
+
+  /* ─── GRID SYSTEM ───────────────────────────────────────── */
+  --grid-columns:     48;
+  --grid-column-gap:  0px;
+  --grid-side-margin: 6rem;
+  --scrollbar-width:  0px;
+  --grid-max-width:   1776px;
+  --grid-width-input: calc(100vw - var(--scrollbar-width) - var(--grid-side-margin) * 2);
+  --grid-width:       min(var(--grid-width-input), var(--grid-max-width));
+  --grid-column-width: calc(
+    (var(--grid-width) - (var(--grid-columns) - 1) * var(--grid-column-gap))
+    / var(--grid-columns)
+  );
+
+  /* ─── §8: EASING LIBRARY — 13 cubic-bezier easings ────────
+     [REAL_CODE] — never simplify or round these values         */
+  --ease-in-quad:     cubic-bezier(0.55,  0.085, 0.68,  0.53);
+  --ease-out-quad:    cubic-bezier(0.25,  0.46,  0.45,  0.94);
+  --ease-in-cubic:    cubic-bezier(0.55,  0.055, 0.675, 0.19);
+  --ease-out-cubic:   cubic-bezier(0.215, 0.61,  0.355, 1.0);
+  --ease-in-quart:    cubic-bezier(0.895, 0.03,  0.685, 0.22);
+  --ease-out-quart:   cubic-bezier(0.165, 0.84,  0.44,  1.0);
+  --ease-in-quint:    cubic-bezier(0.755, 0.05,  0.855, 0.06);
+  --ease-out-quint:   cubic-bezier(0.23,  1.0,   0.32,  1.0);
+  --ease-in-back:     cubic-bezier(0.6,  -0.28,  0.735, 0.045);
+  --ease-out-back:    cubic-bezier(0.175, 0.885, 0.32,  1.275);
+  --ease-in-expo:     cubic-bezier(0.95,  0.05,  0.795, 0.035);
+  --ease-out-expo:    cubic-bezier(0.19,  1.0,   0.22,  1.0);
+  --ease-in-out-sine: cubic-bezier(0.445, 0.05,  0.55,  0.95);
+}
+
+/* Windows scrollbar compensation */
+:root.windows { --scrollbar-width: 14px; }
+
+/* Mobile overrides */
+@media only screen and (max-width: 767px) {
+  :root {
+    --radius:       0.5rem;
+    --overlap:      1rem;
+    --parallax:     2rem;
+    --padding:      1.6rem;
+    --menu-width:   0px;
+    --menu-height:  4.1rem;
+    --menu-pad:     0px;
+    --menu-radius:  0rem;
+    --menu-submenu: 3.8rem;
+    --menu-bottom:  calc(var(--menu-pad) + var(--menu-submenu));
+    --menu-left:    calc(var(--menu-pad));
+    --grid-columns: 16;
+    --grid-side-margin: 2rem;
+    --scrollbar-width: 0px;
+    --vh100min: var(--safe100min);
+  }
+}
+
+
+/* ─── §3: RESPONSIVE SYSTEM [REAL_CODE] ────────────────────── */
+
+/* Desktop font-size scaling */
+@media only screen and (min-width: 768px) {
+  html { font-size: clamp(6.4px, 0.625vw, 12px); }
+}
+
+/* Mobile font-size scaling */
+@media only screen and (max-width: 767px) {
+  html { font-size: clamp(8.5333px, 2.6667vw, 27.28px); }
+}
+
+/* Force fixed 10px base when .remlock class applied via JS */
+html.remlock { font-size: 10px !important; }
+
+
+/* ─── §10: GLOBAL RESET & UTILITIES [REAL_CODE] ──────────────  */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-size-adjust: none;
+  font-size: 10px;
+}
+
+body, html { height: 100%; margin: 0; }
+
+*, ::after, ::before {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+a { color: inherit; text-decoration: none; text-transform: inherit; }
+svg { fill: currentcolor; }
+ol, ul { list-style: none; margin: 0; padding: 0; }
+h1, h2, h3, h4, p { margin: 0; }
+
+button, input {
+  appearance: auto;
+  border: medium none currentcolor;
+  border-image: initial;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  outline: none;
+  padding: 0;
+  text-transform: inherit;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:active,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover {
+  transition: 5000000s ease-in-out;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  background: none;
+  cursor: pointer;
+}
+
+.artboard {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0.3;
+  z-index: var(--z-debug);
+}
+
+.condensed { font-stretch: condensed; }
+.expanded  { font-stretch: expanded; }
+
+.center-align {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.flex-center-column {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.frame-container {
+  padding-left:  calc(var(--menu-pad) + var(--menu-width));
+  padding-right: calc(var(--menu-pad));
+  width: 100%;
+}
+
+.frame-container-first {
+  padding-left:  calc(var(--menu-pad) + var(--menu-width));
+  padding-right: calc(var(--menu-pad));
+  padding-top:   calc(var(--menu-pad) + var(--menu-height));
+  width: 100%;
+}
+
+.the-grid {
+  column-gap: var(--grid-column-gap);
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), 1fr);
+  height: calc(100% - var(--nav-height));
+  left: calc(var(--nav-pad) + var(--nav-width));
+  overflow: hidden;
+  position: absolute;
+  top: calc(var(--nav-pad) + var(--nav-height));
+  width: calc(100% - var(--nav-width));
+}
+
+
+/* ─── §6: TYPOGRAPHY SYSTEM [REAL_CODE] ──────────────────────
+   PRECISION-CRITICAL — never round or substitute any value.
+   ──────────────────────────────────────────────────────────── */
+
+/* DISPLAY HEADING 1 — Hero wordmarks (JOURNAL, MEDIA, PROTOCOL) */
+.type-dh1 {
+  font-family: Hexaframe;
+  font-size: 50.4rem;
+  font-weight: 700;
+  letter-spacing: -0.095em;
+  line-height: 0.87;
+  font-feature-settings: "zero" on;
+  font-variation-settings: "opsz" 0.5;
+}
+
+/* HEADING 0 — Largest editorial display */
+.type-h0 {
+  font-family: ABCWhytePlus;
+  font-size: 8rem;
+  font-weight: 700;
+  letter-spacing: -0.075em;
+  line-height: 0.87;
+  font-variation-settings: "opsz" 0.5;
+  font-feature-settings: "zero" on;
+}
+@media (max-width: 767px) {
+  .type-h0 { font-size: 4.8rem; }
+}
+
+/* HEADING 1 */
+.type-h1 {
+  font-family: ABCWhytePlus;
+  font-size: 5.2rem;
+  font-weight: 650;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+  text-transform: uppercase;
+  font-variation-settings: "opsz" 0.5;
+  font-feature-settings: "zero" on;
+}
+@media (max-width: 767px) {
+  .type-h1 { font-size: 2.5rem; line-height: 0.95; }
+}
+
+/* HEADING 2 */
+.type-h2 {
+  font-family: ABCWhytePlus;
+  font-size: 3.6rem;
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 0.85;
+  text-transform: uppercase;
+  font-variation-settings: "opsz" 0.5;
+}
+@media (max-width: 767px) {
+  .type-h2 { font-size: 2.8rem; letter-spacing: -0.07em; }
+}
+
+/* HEADING 3 — font-weight: 573 is intentional variable-font precision */
+.type-h3 {
+  font-family: ABCWhytePlus;
+  font-size: 2.2rem;
+  font-weight: 573;
+  letter-spacing: -0.04em;
+  line-height: 0.975;
+  font-variation-settings: "opsz" 0.5;
+}
+@media (max-width: 767px) {
+  .type-h3 { font-size: 1.6rem; font-weight: 600; }
+}
+
+/* BODY 1 */
+.type-body1 {
+  font-family: ABCWhytePlus;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  font-variation-settings: "opsz" 0;
+}
+@media (max-width: 767px) {
+  .type-body1 { font-size: 1.2rem; line-height: 1.2; }
+}
+
+/* BODY 2 */
+.type-body2 {
+  font-family: ABCWhyte;
+  font-size: 1.8rem;
+  font-weight: 350;
+  letter-spacing: normal;
+  line-height: 1.5;
+  font-variation-settings: "opsz" 0;
+}
+@media (max-width: 767px) {
+  .type-body2 { font-size: 1.5rem; line-height: 1.3; }
+}
+
+/* CAPTION 2 — most-used UI label (nav, tags, dates) */
+.type-caption2 {
+  font-family: IBMPlexMono;
+  font-size: 0.9rem;
+  font-weight: 450;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+/* CAPTION 3 */
+.type-caption3 {
+  font-family: IBMPlexMono;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+/* CAPTION 4 — fixed px, NOT rem */
+.type-caption4 {
+  font-family: IBMPlexMono;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* BUTTON LABEL */
+.type-btn {
+  font-family: IBMPlexMono;
+  font-size: 1.1rem;
+  font-weight: 450;
+  letter-spacing: -0.02em;
+  line-height: 0.85;
+  text-transform: uppercase;
+}
+@media (max-width: 767px) {
+  .type-btn { font-size: 0.9rem; }
+}
+
+/* GALLERY LABEL */
+.type-gallery {
+  font-family: IBMPlexMono;
+  font-size: 1.1rem;
+  font-weight: 450;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
+  text-transform: uppercase;
+}
+
+/* CITIZEN BODY */
+.type-citizen-body {
+  font-family: ABCWhytePlus;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+/* CITIZEN TITLE */
+.type-citizen-title {
+  font-family: Fraktion;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+@media (max-width: 767px) {
+  .type-citizen-title { font-size: 1rem; }
+}
+
+/* CITIZEN 2 */
+.type-citizen2 {
+  font-family: Fraktion;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+
+/* ─── §9: KEYFRAME ANIMATIONS [REAL_CODE] ───────────────────
+   Exactly 9 keyframes — no audiobar keyframes (those use JS).
+   ──────────────────────────────────────────────────────────── */
+
+@keyframes spin-clockwise        { to { transform: rotate(1turn); } }
+@keyframes spin-counterclockwise { to { transform: rotate(-1turn); } }
+@keyframes dashoffset            { to { stroke-dashoffset: 0; } }
+
+@keyframes flash {
+  0%   { opacity: 0.2; }
+  20%  { opacity: 1; }
+  40%  { opacity: 0.2; }
+  60%  { opacity: 1; }
+  80%  { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%   { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+
+@keyframes blink {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-30%); }
+}
+
+@keyframes slideright {
+  0%   { transform: translate(-100%); }
+  100% { transform: translate(200%); }
+}
+
+@keyframes redraw {
+  0%   { transform: translate(-100%); }
+  100% { transform: translate(0); }
+}
+
+/* Vue page transitions */
+.fade-enter-active { transition: 0.2s; }
+.fade-enter-from   { opacity: 0; }
+.fade-leave-active { transition: 0.2s; }
+.fade-leave-to     { opacity: 0; }
