@@ -61,8 +61,21 @@ These do not block Phases 0–3. Phase 4 (pages) is when most surface.
   - `nuxt.config.ts` — css: global.css, pageTransition: fade, app.head meta
   - Gate: all 6 items ✅; IBM Plex Mono is static 400 only (no variable WOFF2 exists); weights 450-700 fall back to 400 for MVP
 
-- [ ] **Phase 2 — Global components**
-  - TheFrame, TheFrameProgress, BtnBurger, TheFrameSubmenu, BtnAudio, IconMark, TheMenu, ThePreloader, TheConsole, TheFooter, ErrorOverlays
+- [x] **Phase 2 — Global components** — _2026-05-14_
+  - `composables/useMenu.js` — shared reactive open/close/toggle state (module-level singleton)
+  - `components/IconMark.vue` — 4-pointed star SVG, `fill: currentColor` (§18)
+  - `components/BtnBurger.vue` — 2-line SVG, GSAP morphs to X on open (§15)
+  - `components/BtnAudio.vue` — 4×1px bars, rAF scaleY 0.6–1.4 when playing (§17)
+  - `components/TheFrameProgress.vue` — scroll-driven `scaleX(0→1)` bar (§14)
+  - `components/TheFrameSubmenu.vue` — per-route tab map, superscript counts (§16)
+  - `components/TheFrame.vue` — `position: fixed`, all §12 bounds + §13 theme vars; IntersectionObserver toggles `.theme-dark` on `[data-theme]` sections (§12–13)
+  - `components/TheMenu.vue` — `z-500` overlay, 6 sections (close/nav/connect/buy/locale/footer), Teleport to body (§24)
+  - `components/ThePreloader.vue` — `#FAF9F5` bg, simulated progress 0→100%, audio-gate click, Transition fade-out (§25)
+  - `components/TheConsole.vue` — `z-600` terminal, header + scrolling output + input row, `defineExpose` (§26)
+  - `components/TheFooter.vue` — `#000` bg, 4-col grid, wordmark placeholder (§27); LinkHover + BtnMain stubbed for Phase 3
+  - `components/ErrorOverlays.vue` — resize + landscape detection via `window.addEventListener` (§36)
+  - `app.vue` — layout shell: Preloader + Frame + Menu + Console + NuxtPage + Footer + ErrorOverlays
+  - Gate: HTTP 200 SSR, all 11 components in HTML, no compile errors; router warns on /protocol /journal etc. — expected (Phase 4 pages)
 
 - [ ] **Phase 3 — UI components**
   - HackyText (with `.spacer` / `.animation` split), Dot (5×5px square), DotCaption, LinkHover (slide-in not underline), CornerCutSvg, BtnMain, ArticleCard, MediaCard, CitizenCard
