@@ -8,6 +8,9 @@ export default defineNuxtConfig({
     preset: 'static'
   },
 
+  // Flatten component imports — components/ui/Foo.vue resolves as <Foo />, not <UiFoo />
+  components: [{ path: '~/components', pathPrefix: false }],
+
   // Global CSS — §3–§10 foundation tokens, type scale, easings, keyframes, reset
   css: ['~/assets/css/global.css'],
 

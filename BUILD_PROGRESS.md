@@ -77,8 +77,19 @@ These do not block Phases 0–3. Phase 4 (pages) is when most surface.
   - `app.vue` — layout shell: Preloader + Frame + Menu + Console + NuxtPage + Footer + ErrorOverlays
   - Gate: HTTP 200 SSR, all 11 components in HTML, no compile errors; router warns on /protocol /journal etc. — expected (Phase 4 pages)
 
-- [ ] **Phase 3 — UI components**
-  - HackyText (with `.spacer` / `.animation` split), Dot (5×5px square), DotCaption, LinkHover (slide-in not underline), CornerCutSvg, BtnMain, ArticleCard, MediaCard, CitizenCard
+- [x] **Phase 3 — UI components** — _2026-05-14_
+  - `components/ui/HackyText.vue` — §19: spacer/animation split, `scramble()` rAF loop verbatim, `defineExpose({ trigger })`, reduced-motion guard
+  - `components/ui/Dot.vue` — §20: 5×5px square, min/max constrained, `.stroke` variant
+  - `components/ui/LinkHover.vue` — §22: GSAP slide-in bg (`-101% → 0% → 101%` → reset), **NOT** underline
+  - `components/ui/DotCaption.vue` — §21: Dot + LinkHover wrapper, `top: -0.1em` optical alignment, `.singleLine` variant
+  - `components/ui/CornerCutSvg.vue` — §23: right-triangle SVG folder-tab notch, `position: absolute; top: 0; right: 0`
+  - `components/ui/BtnMain.vue` — [PATTERN]: polymorphic `<a>`/`<button>`, GSAP slide-in bg same as LinkHover
+  - `components/ui/ArticleCard.vue` — §29.4: size-small/large, DotCaption tag, inline chevron SVG, `aspect-ratio: 16/9`
+  - `components/ui/MediaCard.vue` — §30: CornerCutSvg, image/video/audio type switch, `aspect-ratio: 4/3`, scale-on-hover
+  - `components/ui/CitizenCard.vue` — §31: CornerCutSvg, `.type-citizen-*` typography, `aspect-ratio: 1`
+  - `nuxt.config.ts` — added `components: [{ path: '~/components', pathPrefix: false }]` (flattens `<UiHackyText>` → `<HackyText>`)
+  - `components/TheFooter.vue` — upgraded btn-presskit stub to real `<BtnMain>`
+  - Gate: HTTP 200 SSR on port 3002, BtnMain in SSR HTML, no compile errors; Phase 4 router warnings expected
 
 - [ ] **Phase 4 — Pages**
   - `/` (Story/Home), `/journal`, `/journal/[slug]`, `/media`, `/gallery`, `/about`, `/protocol`

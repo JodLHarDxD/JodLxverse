@@ -37,11 +37,7 @@
         <p class="section-header type-caption2">● MORE DETAILS</p>
         <p class="contact-label type-caption4">CONTACT US AT</p>
         <a href="mailto:hello@jodlxverse.com" class="footer-link type-caption2">hello@jodlxverse.com</a>
-        <!-- BtnMain (Phase 3): download brand book -->
-        <button class="btn-presskit type-caption2">
-          <span>↓</span>
-          <span>DOWNLOAD BRAND BOOK</span>
-        </button>
+        <BtnMain class="btn-presskit">↓ DOWNLOAD BRAND BOOK</BtnMain>
       </div>
 
     </div>
@@ -101,17 +97,8 @@
 .contact-label { opacity: 0.5; }
 
 .btn-presskit {
-  align-items: center;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  cursor: pointer;
-  display: inline-flex;
-  gap: 8px;
   margin-top: 0.8rem;
-  padding: 10px 16px;
 }
-.btn-presskit:hover { background: rgba(255, 255, 255, 0.05); }
 
 .divider {
   background: hsla(0, 0%, 100%, 0.1);
