@@ -52,19 +52,14 @@ These do not block Phases 0–3. Phase 4 (pages) is when most surface.
   - `npm run dev` smoke test passes — `HTTP 200` on `localhost:3000`, body contains "Phase 0 scaffold complete"
   - Resolved Nuxt **3.21.5** (Nitro 2.13.4, Vite 7.3.3, Vue 3.5.34) — `^3.13.0` was the floor; npm picked latest 3.x
 
-- [ ] **Phase 1 — Foundation**
-  - `assets/css/global.css` ← BLUEPRINT §4–§10 verbatim (`:root` tokens, color palette, full type scale, font loading, 13 easings, 9 keyframes, reset, utilities)
-  - `public/fonts/` ← Inter Variable + IBM Plex Mono + Big Shoulders Display + Space Grotesk (download separately; see §FONT_NOTES below)
-  - `plugins/lenis.client.js` ← Lenis v1.x + ScrollTrigger sync + `gsap.ticker.add` driver + `lagSmoothing(0)` + reduced-motion guard
-  - `composables/useScrollTrigger.js` ← reusable scroll patterns
-  - Wire `nuxt.config.ts` → add `css: ['~/assets/css/global.css']`, Vite SVG `?inline` support, app.head meta
-  - Gate (per CLAUDE.md "Phase 1 Complete"):
-    - [ ] `:root` has all CSS custom properties from §4
-    - [ ] All 6 `@font-face` declarations in place (with fallback warnings logged)
-    - [ ] All 13 easings from §8 in `:root`
-    - [ ] All 9 keyframes from §9 present
-    - [ ] `html { font-size: 10px }` set with `clamp()` responsive scaling
-    - [ ] Lenis initialized + ScrollTrigger synced; no console errors on `npm run dev`
+- [x] **Phase 1 — Foundation** — _2026-05-13_ — commit `f574ca9`
+  - `assets/css/global.css` — §3-10 verbatim; @import at top, 6 @font-face (Path A), :root tokens, 13 easings, full .type-* scale, 9 keyframes, reset/utilities
+  - `public/fonts/` — InterVariable.woff2 (344KB full variable), IBMPlexMono-VariableFont.woff2 (6.8KB static 400), BigShouldersDisplay-Bold.woff2 (4.6KB), SpaceGrotesk-Variable.woff2 (6.6KB)
+  - `plugins/lenis.client.js` — Lenis 1.3.23 + gsap.ticker.add + ST proxy + lagSmoothing(0) + reduced-motion guard + page:finish refresh
+  - `plugins/fonts.client.js` — Path A console.warn per CLAUDE.md
+  - `composables/useScrollTrigger.js` — factory + usePinnedSection + useRevealOnScroll + useStaggerReveal
+  - `nuxt.config.ts` — css: global.css, pageTransition: fade, app.head meta
+  - Gate: all 6 items ✅; IBM Plex Mono is static 400 only (no variable WOFF2 exists); weights 450-700 fall back to 400 for MVP
 
 - [ ] **Phase 2 — Global components**
   - TheFrame, TheFrameProgress, BtnBurger, TheFrameSubmenu, BtnAudio, IconMark, TheMenu, ThePreloader, TheConsole, TheFooter, ErrorOverlays
@@ -102,8 +97,8 @@ When a font alias is loaded, console.warn() once: `[fonts] Using Path A fallback
 
 ## Open flags (none blocking Phase 1 entry)
 
-- 🚩 **`@studio-freight/lenis` deprecated by upstream** — package was renamed to `lenis` (same API, same maintainers). Installed the deprecated name per BLUEPRINT/CLAUDE.md verbatim. **Action:** decide whether to migrate to `lenis` in Phase 1 (recommended — drop-in import path swap, retains security updates) or stick with BLUEPRINT name and pin version.
-- Initial git commit not made — user to confirm message style preference before first commit
+- ✅ `lenis 1.3.23` (migrated from deprecated `@studio-freight/lenis` — same API, user approved)
+- ✅ Initial commit made (`9f0de75`); Phase 1 commit (`f574ca9`)
 - Path B (font commissioning) deferred to pre-launch — track in LEARNINGS.md when triggered
 
 ---
