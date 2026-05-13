@@ -26,10 +26,4 @@ export default defineNuxtConfig({
     pageTransition: { name: 'fade', mode: 'out-in' },
   },
 
-  vite: {
-    // Allow importing SVG files as raw inline strings via the ?inline query
-    // Usage in components: import LogoSvg from '~/assets/svg/logo.svg?inline'
-    assetsInclude: [],
-    plugins: [],
-  },
 })

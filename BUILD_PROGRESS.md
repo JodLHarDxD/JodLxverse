@@ -91,8 +91,17 @@ These do not block Phases 0–3. Phase 4 (pages) is when most surface.
   - `components/TheFooter.vue` — upgraded btn-presskit stub to real `<BtnMain>`
   - Gate: HTTP 200 SSR on port 3002, BtnMain in SSR HTML, no compile errors; Phase 4 router warnings expected
 
-- [ ] **Phase 4 — Pages**
-  - `/` (Story/Home), `/journal`, `/journal/[slug]`, `/media`, `/gallery`, `/about`, `/protocol`
+- [x] **Phase 4 — Pages** — _2026-05-14_
+  - `pages/index.vue` — §28: hero (KEEP/PROTECT/REIMAGINE), projectIntro, keeperIntro, collectionIntro, tableau (3 panels), JODLERS wordmark transition
+  - `pages/journal/index.vue` — §29: hero, featured article, article-grid (35/65 split), to-be-continued
+  - `pages/journal/[slug].vue` — dynamic article detail; 3 static fixture articles; graceful 404 state
+  - `pages/media/index.vue` — §30: hero, 3-col media grid (6 fixture items: image/video/audio)
+  - `pages/gallery/index.vue` — §31: hero, citizen-grid (6 fixture JODLERS)
+  - `pages/about/index.vue` — §32: hero, 3-chapter content (ORIGIN/FRAMEWORKS/PROJECTS), CTA with BtnMain
+  - `pages/protocol/index.vue` — §33: hero, 5 chapters (VISION/WORLD/CHARACTERS/PORTAL/UNION), transparent WebM video accents
+  - `nuxt.config.ts` — removed broken `vite: { assetsInclude: [] }` block (was resolving /svg/ to D:\\ root on Windows)
+  - `public/svg/` — 7 stub SVGs created (degrees, double-arrow-right×2, measurement-lines, arrow-down, record-bars, discord)
+  - Gate: HTTP 200 on all 8 routes (`/`, `/journal`, `/journal/:slug`, `/media`, `/gallery`, `/about`, `/protocol`, `/journal/not-found` → 404 state). Only /legal/* warnings remain (Phase 6)
 
 - [ ] **Phase 5 — Animations**
   - ScrollTrigger parallax, pin+scrub cinematic sections, text stagger reveals, card fan, tableau panel slide-ins, HackyText scramble triggers, reduced-motion overrides
