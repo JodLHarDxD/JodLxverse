@@ -1,5 +1,5 @@
 <template>
-  <div class="page-gallery">
+  <div class="page-gallery" ref="pageEl">
 
     <!-- §31 — Hero -->
     <section class="gallery-hero" data-theme="light">
@@ -16,7 +16,20 @@
 </template>
 
 <script setup>
-useHead({ title: 'Gallery — JodLxVerse' })
+import { ref } from 'vue'
+import { createStaggeredSectionReveal, useMotionLifecycle } from '~/composables/useScrollTrigger'
+
+useHead({
+  title: 'Gallery',
+  meta: [
+    { name: 'description', content: 'Browse 10,000 unique JODLERS — digital collectibles forged at the intersection of intelligence and imagination.' },
+    { property: 'og:title', content: 'Gallery | JodLxVerse' },
+    { property: 'og:description', content: 'Browse 10,000 unique JODLERS — digital collectibles forged at the intersection of intelligence and imagination.' },
+    { property: 'og:url', content: 'https://jodlxverse.com/gallery/' },
+  ],
+})
+
+const pageEl = ref(null)
 
 const citizens = [
   {
@@ -68,6 +81,35 @@ const citizens = [
     description: 'Operates in the spaces between decisions. Invisible by design.',
   },
 ]
+
+useMotionLifecycle(({ gsap }) => {
+  const root = pageEl.value
+  if (!root) return null
+
+  createStaggeredSectionReveal(
+    root,
+    '.gallery-hero',
+    '.dot-caption, .type-dh1'
+  )
+
+  gsap.from(root.querySelectorAll('.citizen-card'), {
+    autoAlpha: 0,
+    y: 36,
+    rotation: (index) => ((index % 3) - 1) * 1.25,
+    duration: 0.75,
+    stagger: {
+      each: 0.055,
+      grid: 'auto',
+      from: 'start',
+    },
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: root.querySelector('.citizen-grid'),
+      start: 'top 80%',
+      toggleActions: 'play none none reverse',
+    },
+  })
+})
 </script>
 
 <style scoped>

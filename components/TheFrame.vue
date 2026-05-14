@@ -21,7 +21,7 @@
       <div class="left">
         <IconMark class="icon-mark" />
         <div class="bottom">
-          <button><BtnAudio /></button>
+          <button aria-label="Toggle audio"><BtnAudio /></button>
         </div>
         <div class="line" />
       </div>

@@ -103,11 +103,29 @@ These do not block Phases 0–3. Phase 4 (pages) is when most surface.
   - `public/svg/` — 7 stub SVGs created (degrees, double-arrow-right×2, measurement-lines, arrow-down, record-bars, discord)
   - Gate: HTTP 200 on all 8 routes (`/`, `/journal`, `/journal/:slug`, `/media`, `/gallery`, `/about`, `/protocol`, `/journal/not-found` → 404 state). Only /legal/* warnings remain (Phase 6)
 
-- [ ] **Phase 5 — Animations**
-  - ScrollTrigger parallax, pin+scrub cinematic sections, text stagger reveals, card fan, tableau panel slide-ins, HackyText scramble triggers, reduced-motion overrides
+- [x] **Phase 5 — Animations** — _2026-05-14_
+  - `composables/useScrollTrigger.js` — added scoped motion lifecycle, reduced-motion guard, reusable section/stagger reveals
+  - `components/ui/HackyText.vue` — added scroll trigger mode, hover retrigger, cleanup, reduced-motion bypass
+  - `pages/index.vue` — hero layer parallax, wordmark stagger, character tilt, keeper pin+scrub, collection card fan, tableau slide-ins/parallax, click-hold caption reveal
+  - `pages/journal/*`, `pages/media/index.vue`, `pages/gallery/index.vue`, `pages/about/index.vue`, `pages/protocol/index.vue` — route-level ScrollTrigger reveals/staggers and protocol video scrub drift
+  - `assets/css/global.css` — global `prefers-reduced-motion` override
+  - `pages/legal/[slug].vue` — launch placeholder route so footer legal links no longer fail prerender
+  - `public/images/compressed/webp/...`, `public/videos/protocol/...` — tiny placeholder assets for referenced Phase 4 media paths pending real production media
+  - Gate: `NUXT_IGNORE_LOCK=1 npm run build` completes; local dev server returns HTTP 200 for `/`, `/journal`, `/journal/our-origin-story`, `/media`, `/gallery`, `/about`, `/protocol`, `/legal/privacy-policy`
 
-- [ ] **Phase 6 — Content & polish**
-  - Storyblok integration (or static fixtures), all `[BRAND]` replacements, asset optimization, wallet decision (already: removed for MVP — confirm), Lighthouse audit, accessibility audit
+- [x] **Phase 6 — Content & polish** — _2026-05-14_
+  - **SEO** — `nuxt.config.ts` expanded with `titleTemplate`, sitewide og:image, og:description, twitter:card, theme-color, critical font `<link rel="preload">` for InterVariable + BigShoulders + IBMPlexMono
+  - **Per-page meta** — all 8 routes updated: title fixed to short form (avoids `'Gallery — JodLxVerse | JodLxVerse'` double-suffix), per-page og:title/og:description/og:url; journal slug uses truncated `article.body` for description
+  - **`public/robots.txt`** — created; disallows `/legal/`; points to sitemap
+  - **`public/sitemap.xml`** — 6-route XML sitemap with priorities + changefreq
+  - **`public/favicon.svg`** — 32×32 SVG with 4-pointed star on brand dark purple
+  - **`public/og-image.png`** — 1200×630 placeholder PNG (brand colors + star mark); replace with designed asset before launch
+  - **Accessibility** — skip-to-content link in `app.vue` (styled in global.css); `<main id="main-content">` wrapper; `:focus-visible` keyboard outline (neon green, 2px); `aria-expanded` + `aria-controls` on BtnBurger; `role="dialog" aria-modal aria-label` on TheMenu; `aria-label` on audio toggle; `aria-hidden` on footer terminal decoration
+  - **`pages/index.vue`** — Phase 5 precision fix: keeper scrub `second-line` end-opacity corrected to `0.6` (matches CSS)
+  - **Footer polish** — terminal filenames updated to `JDX_53815.JPG` / `AUDIO_LOG_2028116.WAV`; `aria-hidden` on decorative column
+  - **Wallet** — confirmed removed for MVP (no action required)
+  - **Static fixtures** — already established in Phase 4; Storyblok deferred to post-launch
+  - **Gate**: `npm run build` prerendered 26 routes (all 6 main + 3 journal articles + 3 legal pages + payloads), exit 0, no errors
 
 ---
 

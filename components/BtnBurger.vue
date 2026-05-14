@@ -5,6 +5,8 @@
     @mouseenter="isHovering = true"
     @mouseleave="isHovering = false"
     @click="toggle"
+    :aria-expanded="isOpen"
+    :aria-controls="'the-menu'"
     aria-label="Toggle menu"
   >
     <svg class="icon-burger" viewBox="0 0 27 16" fill="none" xmlns="http://www.w3.org/2000/svg">

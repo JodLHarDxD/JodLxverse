@@ -1,5 +1,5 @@
 <template>
-  <div class="page-home">
+  <div class="page-home" ref="pageEl">
 
     <!-- §28.1 — Hero -->
     <section class="section-hero" data-theme="dark">
@@ -50,7 +50,7 @@
           </p>
         </div>
         <div class="col-right">
-          <div class="character-card folder-tab">
+          <div class="character-card folder-tab" data-tilt>
             <CornerCutSvg />
             <img src="/images/compressed/webp/hero/hero-character.webp" alt="" loading="lazy">
             <DotCaption class="character-label type-caption4">ANI</DotCaption>
@@ -72,8 +72,10 @@
       </h2>
 
       <div class="terminal-text type-caption4">
-        //INITIALIZING JODLXVERSE STORY LOADING...[47%]<br>
-        Location_Data Character_Attributes JodLx Transmissions
+        <HackyText trigger-on="scroll">
+//INITIALIZING JODLXVERSE STORY LOADING...[47%]
+Location_Data Character_Attributes JodLx Transmissions
+        </HackyText>
       </div>
 
       <div class="coordinates type-caption4">
@@ -103,6 +105,18 @@
           The first JODLERS were forged at the intersection of intelligence and imagination.
           Each one carries a unique constellation of traits, histories, and capabilities.
         </p>
+      </div>
+      <div class="collectionGallery" aria-hidden="true">
+        <div class="card-stack">
+          <div
+            v-for="card in collectionCards"
+            :key="card.title"
+            class="collection-card"
+          >
+            <span class="type-caption4">{{ card.code }}</span>
+            <strong class="type-h3">{{ card.title }}</strong>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -140,9 +154,19 @@
 
 <script setup>
 import { ref } from 'vue'
+import { createStaggeredSectionReveal, useMotionLifecycle } from '~/composables/useScrollTrigger'
 
-useHead({ title: 'JodLxVerse — Keep. Protect. Reimagine.' })
+useHead({
+  titleTemplate: 'JodLxVerse — Keep. Protect. Reimagine.',
+  meta: [
+    { name: 'description', content: 'JodLxVerse is a living world built on curiosity, coherence, and creation. Keep. Protect. Reimagine.' },
+    { property: 'og:title', content: 'JodLxVerse — Keep. Protect. Reimagine.' },
+    { property: 'og:description', content: 'JodLxVerse is a living world built on curiosity, coherence, and creation.' },
+    { property: 'og:url', content: 'https://jodlxverse.com/' },
+  ],
+})
 
+const pageEl = ref(null)
 const holdingId = ref(null)
 
 const tableauPanels = [
@@ -150,6 +174,143 @@ const tableauPanels = [
   { id: 'factions', label: '002 • FACTIONS',    caption: 'Alliances forged from the fragments of the old world.' },
   { id: 'universe', label: '003 • THE WORLD',   caption: 'An uncharted expanse waiting for those bold enough to explore.' },
 ]
+
+const collectionCards = [
+  { code: 'SCA', title: 'Structural Causation' },
+  { code: 'KDA', title: 'Knowledge Delta' },
+  { code: 'AGA', title: 'Adaptive Goals' },
+  { code: 'WPA', title: 'World Pattern' },
+]
+
+useMotionLifecycle(({ gsap }) => {
+  const root = pageEl.value
+  if (!root) return null
+
+  gsap.from(root.querySelectorAll('.hero-wordmark .prefix, .hero-wordmark h1'), {
+    autoAlpha: 0,
+    y: 40,
+    duration: 0.9,
+    ease: 'power3.out',
+    stagger: 0.08,
+  })
+
+  gsap.utils.toArray('.hero-art-layers [data-parallax]', root).forEach((layer) => {
+    const speed = Number(layer.dataset.parallax || 0.5)
+    gsap.to(layer, {
+      y: -180 * speed,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: root.querySelector('.section-hero'),
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+      },
+    })
+  })
+
+  createStaggeredSectionReveal(
+    root,
+    '.homeProjectIntro, .homeCollectionIntro, .homeKeepersTransition',
+    '.type-h0, .type-body1, .dot-caption, .folder-tab, .decoration, .keepers-wordmark'
+  )
+
+  const tiltCard = root.querySelector('[data-tilt]')
+  const onTiltMove = (event) => {
+    const rect = tiltCard.getBoundingClientRect()
+    const x = (event.clientX - rect.left) / rect.width - 0.5
+    const y = (event.clientY - rect.top) / rect.height - 0.5
+    gsap.to(tiltCard, {
+      rotateX: y * -8,
+      rotateY: x * 10,
+      transformPerspective: 900,
+      duration: 0.35,
+      ease: 'power2.out',
+    })
+  }
+  const onTiltLeave = () => {
+    gsap.to(tiltCard, { rotateX: 0, rotateY: 0, duration: 0.45, ease: 'power2.out' })
+  }
+  if (tiltCard) {
+    tiltCard.addEventListener('mousemove', onTiltMove)
+    tiltCard.addEventListener('mouseleave', onTiltLeave)
+  }
+
+  const keeper = root.querySelector('.homeKeeperIntro')
+  if (keeper && window.innerWidth > 767) {
+    const keeperTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: keeper,
+        pin: true,
+        scrub: 1,
+        start: 'top top',
+        end: '+=160%',
+      },
+    })
+
+    keeperTimeline
+      .from(keeper.querySelector('.terminal-text'), { autoAlpha: 0, y: 32, duration: 0.35 }, 0)
+      .from(keeper.querySelector('.coordinates'), { autoAlpha: 0, y: 24, duration: 0.35 }, 0.15)
+      .fromTo(
+        keeper.querySelector('.second-line'),
+        { autoAlpha: 0.18, y: 90 },
+        { autoAlpha: 0.6, y: 0, duration: 0.75 },
+        0.35
+      )
+  }
+
+  gsap.fromTo(root.querySelectorAll('.collection-card'), {
+    autoAlpha: 0,
+    x: 0,
+    y: 72,
+    rotation: 0,
+  }, {
+    autoAlpha: 1,
+    x: (index) => (index - 1.5) * 52,
+    y: (index) => Math.abs(index - 1.5) * -12,
+    rotation: (index) => (index - 1.5) * 8,
+    duration: 0.8,
+    stagger: 0.05,
+    ease: 'back.out(1.4)',
+    scrollTrigger: {
+      trigger: root.querySelector('.collectionGallery'),
+      start: 'top 78%',
+      toggleActions: 'play none none reverse',
+    },
+  })
+
+  gsap.from(root.querySelectorAll('.card-panel'), {
+    autoAlpha: 0,
+    xPercent: (index) => (index - 1) * 32,
+    duration: 1,
+    stagger: 0.12,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: root.querySelector('.homeTableau'),
+      start: 'top 72%',
+      toggleActions: 'play none none reverse',
+    },
+  })
+
+  gsap.utils.toArray('.card-panel .layer-placeholder', root).forEach((layer) => {
+    gsap.to(layer, {
+      yPercent: -10,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: layer.closest('.card-panel'),
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true,
+      },
+    })
+  })
+
+  return () => {
+    if (tiltCard) {
+      tiltCard.removeEventListener('mousemove', onTiltMove)
+      tiltCard.removeEventListener('mouseleave', onTiltLeave)
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -238,6 +399,7 @@ const tableauPanels = [
   margin-bottom: 2rem;
   overflow: hidden;
   position: relative;
+  transform-style: preserve-3d;
 }
 
 .card.folder-tab img,
@@ -309,6 +471,41 @@ const tableauPanels = [
 
 .homeCollectionIntro .col-right > :deep(.dot-caption) { margin-bottom: 2rem; }
 
+.collectionGallery {
+  grid-column: 1 / -1;
+  min-height: 24rem;
+  position: relative;
+}
+
+.card-stack {
+  height: 100%;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(36rem, 80vw);
+}
+
+.collection-card {
+  background: var(--cl-white);
+  border: 1px solid var(--line-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  height: 18rem;
+  justify-content: space-between;
+  left: 50%;
+  padding: 2rem;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: 50% 120%;
+  width: 24rem;
+  will-change: transform;
+}
+
+.collection-card strong { max-width: 16rem; }
+
 /* ─── Tableau §28.5 ───────────────────────────── */
 .homeTableau {
   background: #0d0d0d;
@@ -335,9 +532,26 @@ const tableauPanels = [
 .card-panel.is-holding { transform: scale(0.98); }
 
 .layers { inset: 0; position: absolute; }
-.layer-placeholder { background: #1a1a2e; height: 100%; width: 100%; }
+.layer-placeholder {
+  background: linear-gradient(135deg, #141424 0%, #22172e 45%, #10151c 100%);
+  height: 112%;
+  width: 100%;
+  will-change: transform;
+}
 
 .panel-label { margin-bottom: 1rem; }
+
+.caption {
+  max-width: 28rem;
+  opacity: 0;
+  transform: translateY(1rem);
+  transition: opacity 0.25s var(--ease-out-quart), transform 0.25s var(--ease-out-quart);
+}
+
+.card-panel.is-holding .caption {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 .click-hold-prompt {
   margin-top: 1.5rem;

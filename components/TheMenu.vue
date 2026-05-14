@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div class="the-menu" :style="{ display: isOpen ? 'flex' : 'none' }">
+    <div id="the-menu" class="the-menu" :style="{ display: isOpen ? 'flex' : 'none' }" role="dialog" aria-modal="true" aria-label="Navigation menu">
 
       <!-- Translucent background underlay -->
       <div class="underlay">

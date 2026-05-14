@@ -1,5 +1,5 @@
 <template>
-  <div class="page-media">
+  <div class="page-media" ref="pageEl">
 
     <!-- §30 — Hero -->
     <section class="media-hero" data-theme="light">
@@ -20,7 +20,20 @@
 </template>
 
 <script setup>
-useHead({ title: 'Media — JodLxVerse' })
+import { ref } from 'vue'
+import { createStaggeredSectionReveal, useMotionLifecycle } from '~/composables/useScrollTrigger'
+
+useHead({
+  title: 'Media',
+  meta: [
+    { name: 'description', content: 'Explore images, videos, and audio from the JodLxVerse universe.' },
+    { property: 'og:title', content: 'Media | JodLxVerse' },
+    { property: 'og:description', content: 'Explore images, videos, and audio from the JodLxVerse universe.' },
+    { property: 'og:url', content: 'https://jodlxverse.com/media/' },
+  ],
+})
+
+const pageEl = ref(null)
 
 const items = [
   { id: 1, type: 'image', title: 'The Keep — Panorama',         date: '18.08.22', thumbnail: null, detailUrl: '#' },
@@ -30,6 +43,34 @@ const items = [
   { id: 5, type: 'image', title: 'JODLERS: Character Sheet',     date: '21.01.25', thumbnail: null, detailUrl: '#' },
   { id: 6, type: 'video', title: 'New Eden Dreams — Cinematic',  date: '27.03.26', thumbnail: null, preview: null, detailUrl: '#' },
 ]
+
+useMotionLifecycle(({ gsap }) => {
+  const root = pageEl.value
+  if (!root) return null
+
+  createStaggeredSectionReveal(
+    root,
+    '.media-hero',
+    '.dot-caption, .type-dh1, .meta-bar'
+  )
+
+  gsap.from(root.querySelectorAll('.media-card'), {
+    autoAlpha: 0,
+    y: 38,
+    duration: 0.75,
+    stagger: {
+      each: 0.06,
+      grid: 'auto',
+      from: 'start',
+    },
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: root.querySelector('.media-grid'),
+      start: 'top 80%',
+      toggleActions: 'play none none reverse',
+    },
+  })
+})
 </script>
 
 <style scoped>

@@ -1,5 +1,5 @@
 <template>
-  <div class="page-article">
+  <div class="page-article" ref="pageEl">
     <article v-if="article" class="article-body" data-theme="light">
       <header class="article-header">
         <DotCaption class="type-caption4">{{ article.category }}</DotCaption>
@@ -28,8 +28,12 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { createStaggeredSectionReveal, useMotionLifecycle } from '~/composables/useScrollTrigger'
+
 const route   = useRoute()
 const slug    = route.params.slug
+const pageEl  = ref(null)
 
 const ARTICLES = {
   'our-origin-story': {
@@ -57,7 +61,27 @@ const ARTICLES = {
 
 const article = ARTICLES[slug] || null
 
-useHead({ title: article ? `${article.title} — JodLxVerse` : 'Article Not Found — JodLxVerse' })
+const articleDescription = article ? article.body.slice(0, 160) : 'A story from the JodLxVerse world.'
+useHead(article ? {
+  title: article.title,
+  meta: [
+    { name: 'description', content: articleDescription },
+    { property: 'og:title', content: `${article.title} | JodLxVerse` },
+    { property: 'og:description', content: articleDescription },
+    { property: 'og:url', content: `https://jodlxverse.com/journal/${slug}` },
+  ],
+} : { title: 'Article Not Found' })
+
+useMotionLifecycle(() => {
+  const root = pageEl.value
+  if (!root) return null
+
+  createStaggeredSectionReveal(
+    root,
+    '.article-body, .not-found',
+    '.dot-caption, .type-h0, .article-meta, .article-content, .back-link'
+  )
+})
 </script>
 
 <style scoped>

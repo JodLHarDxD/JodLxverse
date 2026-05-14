@@ -1,5 +1,5 @@
 <template>
-  <div class="page-journal">
+  <div class="page-journal" ref="pageEl">
 
     <!-- §29.1 — Hero -->
     <section class="journal-hero" data-theme="light">
@@ -68,7 +68,20 @@
 </template>
 
 <script setup>
-useHead({ title: 'Journal — JodLxVerse' })
+import { ref } from 'vue'
+import { createStaggeredSectionReveal, useMotionLifecycle } from '~/composables/useScrollTrigger'
+
+useHead({
+  title: 'Journal',
+  meta: [
+    { name: 'description', content: 'Discover the latest stories, updates, and community news from the JodLxVerse world.' },
+    { property: 'og:title', content: 'Journal | JodLxVerse' },
+    { property: 'og:description', content: 'Discover the latest stories, updates, and community news from the JodLxVerse world.' },
+    { property: 'og:url', content: 'https://jodlxverse.com/journal/' },
+  ],
+})
+
+const pageEl = ref(null)
 
 const articles = [
   {
@@ -93,6 +106,42 @@ const articles = [
     thumbnail: null,
   },
 ]
+
+useMotionLifecycle(({ gsap }) => {
+  const root = pageEl.value
+  if (!root) return null
+
+  createStaggeredSectionReveal(
+    root,
+    '.journal-hero, .featured-article, .article-grid, .to-be-continued',
+    '.dot-caption, .type-dh1, .type-h0, .type-body1, .type-h2, .type-h3, .meta-bar, .cta, blockquote'
+  )
+
+  gsap.from(root.querySelectorAll('.article-card'), {
+    autoAlpha: 0,
+    y: 42,
+    rotation: (index) => index === 0 ? -1.5 : 1.5,
+    duration: 0.8,
+    stagger: 0.1,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: root.querySelector('.article-grid'),
+      start: 'top 78%',
+      toggleActions: 'play none none reverse',
+    },
+  })
+
+  gsap.to(root.querySelector('.featured-overlay'), {
+    yPercent: -10,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: root.querySelector('.featured-article'),
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: true,
+    },
+  })
+})
 </script>
 
 <style scoped>

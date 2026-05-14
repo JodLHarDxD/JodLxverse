@@ -1,10 +1,13 @@
 <template>
   <div id="app-root">
+    <a href="#main-content" class="skip-link">SKIP TO CONTENT</a>
     <ThePreloader />
     <TheFrame />
     <TheMenu />
     <TheConsole />
-    <NuxtPage />
+    <main id="main-content">
+      <NuxtPage />
+    </main>
     <TheFooter />
     <ErrorOverlays />
   </div>

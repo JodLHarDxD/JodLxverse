@@ -1,5 +1,5 @@
 <template>
-  <div class="page-protocol">
+  <div class="page-protocol" ref="pageEl">
 
     <!-- §33 — Hero -->
     <section class="protocol-hero" data-theme="dark">
@@ -153,7 +153,64 @@
 </template>
 
 <script setup>
-useHead({ title: 'Protocol — JodLxVerse' })
+import { ref } from 'vue'
+import { createStaggeredSectionReveal, useMotionLifecycle } from '~/composables/useScrollTrigger'
+
+useHead({
+  title: 'Protocol',
+  meta: [
+    { name: 'description', content: 'The JodLx Protocol — vision, world, characters, portal, and union. An uncharted universe waiting to be explored.' },
+    { property: 'og:title', content: 'Protocol | JodLxVerse' },
+    { property: 'og:description', content: 'The JodLx Protocol — vision, world, characters, portal, and union. An uncharted universe waiting to be explored.' },
+    { property: 'og:url', content: 'https://jodlxverse.com/protocol/' },
+  ],
+})
+
+const pageEl = ref(null)
+
+useMotionLifecycle(({ gsap }) => {
+  const root = pageEl.value
+  if (!root) return null
+
+  createStaggeredSectionReveal(
+    root,
+    '.protocol-hero, .protocol-footer',
+    '.type-dh1, img'
+  )
+
+  gsap.utils.toArray('.protocol-section', root).forEach((section) => {
+    gsap.from(section.querySelectorAll('.dot-caption, .type-h0, .protocol-content p'), {
+      autoAlpha: 0,
+      y: 34,
+      duration: 0.85,
+      stagger: 0.075,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 78%',
+        toggleActions: 'play none none reverse',
+      },
+    })
+
+    const video = section.querySelector('.transparentVideo')
+    if (video) {
+      gsap.fromTo(video, {
+        autoAlpha: 0.25,
+        yPercent: 8,
+      }, {
+        autoAlpha: 0.6,
+        yPercent: -10,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
+    }
+  })
+})
 </script>
 
 <style scoped>

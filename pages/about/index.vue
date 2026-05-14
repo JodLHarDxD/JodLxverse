@@ -1,5 +1,5 @@
 <template>
-  <div class="page-about">
+  <div class="page-about" ref="pageEl">
 
     <!-- §32 — Hero -->
     <section class="about-hero" data-theme="light">
@@ -68,7 +68,46 @@
 </template>
 
 <script setup>
-useHead({ title: 'About — JodLxVerse' })
+import { ref } from 'vue'
+import { createStaggeredSectionReveal, useMotionLifecycle } from '~/composables/useScrollTrigger'
+
+useHead({
+  title: 'About',
+  meta: [
+    { name: 'description', content: 'Intelligence as architecture. The origin, frameworks, and active experiments behind JodLxVerse.' },
+    { property: 'og:title', content: 'About | JodLxVerse' },
+    { property: 'og:description', content: 'Intelligence as architecture. The origin, frameworks, and active experiments behind JodLxVerse.' },
+    { property: 'og:url', content: 'https://jodlxverse.com/about/' },
+  ],
+})
+
+const pageEl = ref(null)
+
+useMotionLifecycle(({ gsap }) => {
+  const root = pageEl.value
+  if (!root) return null
+
+  createStaggeredSectionReveal(
+    root,
+    '.about-hero, .about-cta',
+    '.type-dh1, .type-h0, .social-cta > *'
+  )
+
+  gsap.utils.toArray('.chapter', root).forEach((chapter) => {
+    gsap.from(chapter.querySelectorAll('.dot-caption, .type-h0, p'), {
+      autoAlpha: 0,
+      y: 32,
+      duration: 0.8,
+      stagger: 0.07,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: chapter,
+        start: 'top 82%',
+        toggleActions: 'play none none reverse',
+      },
+    })
+  })
+})
 </script>
 
 <style scoped>

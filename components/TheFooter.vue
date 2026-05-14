@@ -4,12 +4,12 @@
     <div class="top-grid">
 
       <!-- Column 1: Terminal flavor text -->
-      <div class="col col-terminal">
+      <div class="col col-terminal" aria-hidden="true">
         <p class="type-caption4">// INITIALIZING</p>
         <p class="type-caption4">NEW FILES IN DATABASE</p>
         <p class="type-caption4">&nbsp;</p>
-        <p class="type-caption4">FILE_001.JPG</p>
-        <p class="type-caption4">AUDIO_LOG_0001.WAV</p>
+        <p class="type-caption4">JDX_53815.JPG</p>
+        <p class="type-caption4">AUDIO_LOG_2028116.WAV</p>
         <p class="type-caption4">&nbsp;</p>
         <p class="type-caption4">ACTIVATE CONSOLE FOR ACCESS...</p>
       </div>

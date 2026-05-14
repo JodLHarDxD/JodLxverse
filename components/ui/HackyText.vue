@@ -1,15 +1,23 @@
 <template>
-  <span class="hacky-text">
+  <span class="hacky-text" @mouseenter="handleHover">
     <span class="spacer" ref="spacerEl"><slot /></span>
     <span class="animation" ref="animEl"></span>
   </span>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+const props = defineProps({
+  triggerOn: { type: String, default: 'mount' }, // mount | scroll | manual | hover
+  once: { type: Boolean, default: true },
+})
 
 const spacerEl = ref(null)
 const animEl   = ref(null)
+let scrollTrigger = null
+let isAnimating = false
 
 const CHARS = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
 
@@ -18,6 +26,7 @@ function scramble(targetText, el, opts = {}) {
   const length      = targetText.length
   const totalFrames = Math.ceil(duration / 16.67)
   let frame = 0
+  isAnimating = true
 
   function tick() {
     let output = ''
@@ -34,21 +43,48 @@ function scramble(targetText, el, opts = {}) {
     el.textContent = output
     frame++
     if (frame < totalFrames) requestAnimationFrame(tick)
-    else el.textContent = targetText
+    else {
+      el.textContent = targetText
+      isAnimating = false
+    }
   }
   requestAnimationFrame(tick)
 }
 
 function trigger(opts) {
   const text = spacerEl.value?.textContent?.trim() || ''
-  if (text && animEl.value) scramble(text, animEl.value, opts)
+  if (text && animEl.value && !isAnimating) scramble(text, animEl.value, opts)
+}
+
+function handleHover() {
+  if (props.triggerOn === 'manual') return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  trigger({ duration: 520, perCharDelay: 18 })
 }
 
 onMounted(() => {
   const text = spacerEl.value?.textContent?.trim() || ''
   if (animEl.value) animEl.value.textContent = text
-  // Run initial scramble (Phase 5 will add ScrollTrigger)
-  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) trigger()
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  if (props.triggerOn === 'scroll') {
+    scrollTrigger = ScrollTrigger.create({
+      trigger: spacerEl.value,
+      start: 'top 85%',
+      once: props.once,
+      onEnter: () => trigger(),
+      onEnterBack: () => {
+        if (!props.once) trigger()
+      },
+    })
+  } else if (props.triggerOn === 'mount') {
+    trigger()
+  }
+})
+
+onUnmounted(() => {
+  if (scrollTrigger) scrollTrigger.kill()
 })
 
 defineExpose({ trigger })
@@ -76,6 +112,7 @@ defineExpose({ trigger })
   max-width: 100%;
   position: absolute;
   top: 0;
+  white-space: pre-line;
 }
 
 @media (max-width: 767px) {
